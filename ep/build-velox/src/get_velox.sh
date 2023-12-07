@@ -106,7 +106,8 @@ function process_setup_ubuntu {
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh gcs' scripts/setup-ubuntu.sh
   fi
   if [ $ENABLE_ABFS == "ON" ]; then
-    apt-get install -y curl 
+    apt update
+    apt install -y curl 
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh abfs' scripts/setup-ubuntu.sh
   fi
   sed -i 's/run_and_time install_conda/#run_and_time install_conda/' scripts/setup-ubuntu.sh
