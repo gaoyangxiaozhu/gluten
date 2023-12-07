@@ -106,6 +106,7 @@ function process_setup_ubuntu {
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh gcs' scripts/setup-ubuntu.sh
   fi
   if [ $ENABLE_ABFS == "ON" ]; then
+    apt-get install -y curl 
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh abfs' scripts/setup-ubuntu.sh
   fi
   sed -i 's/run_and_time install_conda/#run_and_time install_conda/' scripts/setup-ubuntu.sh
@@ -139,6 +140,7 @@ function process_setup_centos8 {
     sed -i '/^cmake_install_deps fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh gcs' scripts/setup-centos8.sh
   fi
   if [ $ENABLE_ABFS == "ON" ]; then
+    dnf install -y curl
     sed -i '/^cmake_install_deps fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh abfs' scripts/setup-centos8.sh
   fi
 }
@@ -169,6 +171,7 @@ function process_setup_centos7 {
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh gcs' scripts/setup-centos7.sh
   fi
   if [ $ENABLE_ABFS == "ON" ]; then
+    yum install -y curl 
     sed -i '/^  run_and_time install_fmt/a \ \ '${VELOX_HOME}/scripts'/setup-adapters.sh abfs' scripts/setup-centos7.sh
   fi
 }
