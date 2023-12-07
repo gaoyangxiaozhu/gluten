@@ -14,13 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.glutenproject.metrics
+package io.glutenproject.execution
 
-import org.apache.spark.sql.execution.metric.SQLMetric
+import org.apache.spark.sql.catalyst.expressions.Expression
+import org.apache.spark.sql.execution.datasources.v2.BatchScanExec
 
-class SortMergeJoinMetricsUpdater(val metrics: Map[String, SQLMetric]) extends MetricsUpdater {
+class IcebergTransformerProvider extends DataSourceV2TransformerRegister {
 
-  override def updateNativeMetrics(opMetrics: IOperatorMetrics): Unit = {
-    if (opMetrics != null) {}
+  override def scanClassName(): String = "org.apache.iceberg.spark.source.SparkBatchQueryScan"
+
+  override def createDataSourceV2Transformer(
+      batchScan: BatchScanExec,
+      partitionFilters: Seq[Expression]): BatchScanExecTransformer = {
+    IcebergScanTransformer.apply(batchScan, partitionFilters)
   }
 }

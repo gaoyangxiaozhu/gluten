@@ -14,14 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.glutenproject.substrait
+package io.glutenproject.substrait.rel;
 
-import io.glutenproject.substrait.rel.LocalFilesNode.ReadFileFormat
+import java.util.List;
+import java.util.Map;
 
-/**
- * A mix-in interface for BasicScanExecTransformer. This can be used to report FileFormat for a file
- * based scan operator.
- */
-trait SupportFormat {
-  @transient val fileFormat: ReadFileFormat
+public class IcebergLocalFilesBuilder {
+
+  // TODO: Add makeIcebergLocalFiles for MOR iceberg table
+
+  public static IcebergLocalFilesNode makeIcebergLocalFiles(
+      Integer index,
+      List<String> paths,
+      List<Long> starts,
+      List<Long> lengths,
+      List<Map<String, String>> partitionColumns,
+      LocalFilesNode.ReadFileFormat fileFormat,
+      List<String> preferredLocations) {
+    return new IcebergLocalFilesNode(
+        index, paths, starts, lengths, partitionColumns, fileFormat, preferredLocations);
+  }
 }

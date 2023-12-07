@@ -19,7 +19,7 @@ package org.apache.spark.shuffle
 import io.glutenproject.GlutenConfig
 import io.glutenproject.backendsapi.clickhouse.CHBackendSettings
 import io.glutenproject.memory.alloc.CHNativeMemoryAllocators
-import io.glutenproject.memory.memtarget.{MemoryTarget, Spiller}
+import io.glutenproject.memory.memtarget.{MemoryTarget, Spiller, Spillers}
 import io.glutenproject.vectorized._
 
 import org.apache.spark.SparkEnv
@@ -29,6 +29,7 @@ import org.apache.spark.sql.vectorized.ColumnarBatch
 import org.apache.spark.util.{SparkDirectoryUtil, Utils}
 
 import java.io.IOException
+import java.util
 import java.util.{Locale, UUID}
 
 class CHColumnarShuffleWriter[K, V](
@@ -55,6 +56,8 @@ class CHColumnarShuffleWriter[K, V](
     GlutenShuffleUtils.getCompressionCodec(conf).toUpperCase(Locale.ROOT)
   private val preferSpill = GlutenConfig.getConf.chColumnarShufflePreferSpill
   private val throwIfMemoryExceed = GlutenConfig.getConf.chColumnarThrowIfMemoryExceed
+  private val flushBlockBufferBeforeEvict =
+    GlutenConfig.getConf.chColumnarFlushBlockBufferBeforeEvict
   private val spillThreshold = GlutenConfig.getConf.chColumnarShuffleSpillThreshold
   private val jniWrapper = new CHShuffleSplitterJniWrapper
   // Are we in the process of stopping? Because map tasks can call stop() with success = true
@@ -104,7 +107,8 @@ class CHColumnarShuffleWriter[K, V](
         preferSpill,
         spillThreshold,
         CHBackendSettings.shuffleHashAlgorithm,
-        throwIfMemoryExceed
+        throwIfMemoryExceed,
+        flushBlockBufferBeforeEvict
       )
       CHNativeMemoryAllocators.createSpillable(
         "ShuffleWriter",
@@ -121,6 +125,8 @@ class CHColumnarShuffleWriter[K, V](
             logInfo(s"Gluten shuffle writer: Spilled $spilled / $size bytes of data")
             spilled
           }
+
+          override def applicablePhases(): util.Set[Spiller.Phase] = Spillers.PHASE_SET_SPILL_ONLY
         }
       )
     }
