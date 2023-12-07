@@ -86,7 +86,11 @@ done
 function compile {
   if [ -z "${GLUTEN_VCPKG_ENABLED:-}" ] && [ $RUN_SETUP_SCRIPT == "ON" ]; then
     if [ $OS == 'Linux' ]; then
+      set +e
       setup_linux
+      echo "debug check vcpkg bootstrap log"
+      cat /opt/velox/fmt/azure-sdk-for-cpp/sdk/core/azure-core/_build/vcpkg-bootstrap.log
+      set -e
     elif [ $OS == 'Darwin' ]; then
       setup_macos
     else
