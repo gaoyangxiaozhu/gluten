@@ -91,6 +91,9 @@ function compile {
       echo "debug check vcpkg bootstrap log"
       cat /opt/velox/fmt/azure-sdk-for-cpp/sdk/core/azure-core/_build/vcpkg-bootstrap.log
       echo "check booststrap log done"
+      echo "debug check vcpkg bootstrap log 2"
+      cat /tmp/velox-deps/fmt/azure-sdk-for-cpp/sdk/core/azure-core/_build/vcpkg-manifest-install.log
+      echo "check boostrap log 2 done"
       set -e
     elif [ $OS == 'Darwin' ]; then
       setup_macos
